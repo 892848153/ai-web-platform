@@ -1,0 +1,33 @@
+name: Daily Update Best Practices
+
+on:
+  # 每天 UTC 时间 00:00 (北京时间早上 8:00) 自动触发
+  schedule:
+    - cron: '0 0 * * *'
+  # 允许在 GitHub Actions 页面手动触发
+  workflow_dispatch:
+
+jobs:
+  update-practices:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run update script
+        env:
+          # 必须在 GitHub Secrets 中配置这些环境变量
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VITE_LONG_CAT_API_KEY: ${{ secrets.VITE_LONG_CAT_API_KEY }}
+        run: npm run update-practices
