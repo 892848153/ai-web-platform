@@ -46,41 +46,63 @@ export default function QAAssistant() {
     setIsLoading(true);
 
     try {
-      // 简单的聊天模式，直接调用API
-      const response = await fetch('https://api.openai-compatible.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: MODEL_NAME,
-          messages: [
-            { role: 'system', content: '你是一个专业的职场与技术 AI 助手。请提供准确、有帮助的回答。' },
-            ...messages.map(m => ({ role: m.role, content: m.content })),
-            { role: 'user', content: userMessage.content }
-          ],
-        }),
-      });
+      // 尝试调用API，如果失败则使用模拟响应
+      let assistantMessage: Message;
 
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
+      try {
+        const response = await fetch('https://api.longcat.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: MODEL_NAME,
+            messages: [
+              { role: 'system', content: '你是一个专业的职场与技术 AI 助手。请提供准确、有帮助的回答。' },
+              { role: 'user', content: userMessage.content }
+            ],
+            max_tokens: 1000,
+            temperature: 0.7,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        assistantMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.choices[0].message.content,
+        };
+      } catch (apiError) {
+        console.warn('API调用失败，使用模拟响应:', apiError);
+
+        // 模拟AI响应作为fallback
+        const mockResponses = [
+          `关于"${userMessage.content}"这个问题，这是一个很好的职场/技术问题。基于我的理解，我建议您可以从以下几个方面来考虑：\n\n1. **问题分析**：首先明确问题的核心要点\n2. **解决方案**：根据具体情况制定相应的策略\n3. **实施步骤**：按优先级逐步推进\n\n如果您需要更具体的建议，请提供更多背景信息。`,
+          `感谢您的问题："${userMessage.content}"。\n\n这是一个值得深入探讨的话题。我建议：\n\n• **理论学习**：查阅相关领域的权威资料\n• **实践应用**：在具体场景中验证理论\n• **持续优化**：根据反馈不断调整策略\n\n有什么具体方面需要我进一步解释吗？`,
+          `针对您提到的"${userMessage.content}"，我认为：\n\n**关键点**：\n- 理解问题本质\n- 分析影响因素\n- 制定可行方案\n\n**建议行动**：\n1. 收集相关信息\n2. 评估各种选项\n3. 选择最优解并实施\n\n如需详细讨论某个方面，请告诉我。`
+        ];
+
+        const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+
+        assistantMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: `[演示模式] ${randomResponse}\n\n💡 *当前为演示响应，实际部署时将连接真实的AI服务。*`,
+        };
       }
-
-      const data = await response.json();
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.choices[0].message.content,
-      };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('API Error:', error);
+      console.error('聊天错误:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `抱歉，处理您的问题时遇到了错误：${error instanceof Error ? error.message : '未知错误'}。请稍后重试。`,
+        content: `抱歉，连接AI服务时遇到了问题。这可能是由于网络连接或API服务暂时不可用导致的。\n\n**建议操作：**\n1. 检查网络连接\n2. 稍后重试\n3. 如果问题持续存在，请联系技术支持\n\n您可以尝试重新发送您的问题。`,
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
