@@ -17,7 +17,7 @@ export default function QAAssistant() {
     {
       id: '1',
       role: 'assistant',
-      content: '你好！我是基于 longcat 模型的智能问答助手。我可以帮助你解答职场和技术问题。请问有什么需要我帮忙的吗？',
+      content: '🐱 你好！我是LongCat AI助手，专业的职场与技术顾问。我可以帮你解答：\n\n• **技术问题**：编程、算法、系统设计\n• **职场建议**：职业发展、团队协作、项目管理\n• **AI学习**：机器学习、深度学习、应用实践\n\n请问有什么需要我帮忙的吗？',
     }
   ]);
   const [input, setInput] = useState('');
@@ -46,32 +46,53 @@ export default function QAAssistant() {
     setIsLoading(true);
 
     try {
-      // 尝试调用API，如果失败则使用模拟响应
+      // 尝试调用longcat API
       let assistantMessage: Message;
 
       try {
+        // 使用正确的longcat API endpoint
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
+
         const response = await fetch('https://api.longcat.ai/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${API_KEY}`,
+            'User-Agent': 'AI-Web-Platform/1.0',
           },
           body: JSON.stringify({
-            model: MODEL_NAME,
+            model: 'longcat-v1', // 使用正确的模型名称
             messages: [
-              { role: 'system', content: '你是一个专业的职场与技术 AI 助手。请提供准确、有帮助的回答。' },
+              {
+                role: 'system',
+                content: '你是一个专业的职场与技术AI助手，名为LongCat。你擅长解答技术问题、职场建议、编程指导等。请提供准确、有帮助、详细的回答。'
+              },
               { role: 'user', content: userMessage.content }
             ],
-            max_tokens: 1000,
-            temperature: 0.7,
+            max_tokens: 1500,
+            temperature: 0.8,
+            top_p: 0.95,
+            frequency_penalty: 0.0,
+            presence_penalty: 0.0,
           }),
+          signal: controller.signal,
         });
 
+        clearTimeout(timeoutId);
+
         if (!response.ok) {
-          throw new Error(`API request failed: ${response.status}`);
+          const errorText = await response.text();
+          console.error('LongCat API Error:', response.status, errorText);
+          throw new Error(`API request failed: ${response.status} - ${errorText}`);
         }
 
         const data = await response.json();
+
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+          throw new Error('Invalid API response format');
+        }
+
         assistantMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
@@ -80,19 +101,32 @@ export default function QAAssistant() {
       } catch (apiError) {
         console.warn('API调用失败，使用模拟响应:', apiError);
 
-        // 模拟AI响应作为fallback
-        const mockResponses = [
-          `关于"${userMessage.content}"这个问题，这是一个很好的职场/技术问题。基于我的理解，我建议您可以从以下几个方面来考虑：\n\n1. **问题分析**：首先明确问题的核心要点\n2. **解决方案**：根据具体情况制定相应的策略\n3. **实施步骤**：按优先级逐步推进\n\n如果您需要更具体的建议，请提供更多背景信息。`,
-          `感谢您的问题："${userMessage.content}"。\n\n这是一个值得深入探讨的话题。我建议：\n\n• **理论学习**：查阅相关领域的权威资料\n• **实践应用**：在具体场景中验证理论\n• **持续优化**：根据反馈不断调整策略\n\n有什么具体方面需要我进一步解释吗？`,
-          `针对您提到的"${userMessage.content}"，我认为：\n\n**关键点**：\n- 理解问题本质\n- 分析影响因素\n- 制定可行方案\n\n**建议行动**：\n1. 收集相关信息\n2. 评估各种选项\n3. 选择最优解并实施\n\n如需详细讨论某个方面，请告诉我。`
-        ];
+        // 根据问题类型提供更相关的模拟响应
+        const getMockResponse = (question: string) => {
+          const lowerQuestion = question.toLowerCase();
 
-        const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+          if (lowerQuestion.includes('代码') || lowerQuestion.includes('编程') || lowerQuestion.includes('开发')) {
+            return `关于编程问题"${question}"，我建议：\n\n**技术方案**：\n1. 分析需求和技术栈\n2. 选择合适的设计模式\n3. 编写清晰、可维护的代码\n\n**最佳实践**：\n• 遵循SOLID原则\n• 编写单元测试\n• 代码审查\n\n需要具体的技术指导吗？`;
+          }
+
+          if (lowerQuestion.includes('职场') || lowerQuestion.includes('工作') || lowerQuestion.includes('管理')) {
+            return `关于职场问题"${question}"，我的建议：\n\n**职业发展**：\n1. 明确职业目标\n2. 持续学习新技能\n3. 建立专业网络\n\n**工作方法**：\n• 优先级管理\n• 有效沟通\n• 团队协作\n\n需要更具体的职场建议吗？`;
+          }
+
+          if (lowerQuestion.includes('ai') || lowerQuestion.includes('人工智能') || lowerQuestion.includes('机器学习')) {
+            return `关于AI技术"${question}"，关键点包括：\n\n**基础知识**：\n1. 机器学习原理\n2. 深度学习框架\n3. 实际应用场景\n\n**学习路径**：\n• 理论基础\n• 编程实践\n• 项目经验\n\n需要详细的AI学习指导吗？`;
+          }
+
+          // 通用响应
+          return `关于"${question}"这个问题，我建议从以下几个角度思考：\n\n**问题分析**：\n1. 明确核心需求\n2. 识别关键因素\n3. 评估约束条件\n\n**解决方案**：\n• 制定具体步骤\n• 考虑风险因素\n• 准备备选方案\n\n需要我详细解释某个方面吗？`;
+        };
+
+        const mockResponse = getMockResponse(userMessage.content);
 
         assistantMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: `[演示模式] ${randomResponse}\n\n💡 *当前为演示响应，实际部署时将连接真实的AI服务。*`,
+          content: `🤖 **LongCat AI (演示模式)**\n\n${mockResponse}\n\n⚠️ *当前使用演示响应，因为无法连接到LongCat AI服务。错误详情：${apiError instanceof Error ? apiError.message : '未知错误'}*\n\n请检查：\n1. API服务是否可用\n2. 网络连接状态\n3. API密钥配置`,
         };
       }
 
