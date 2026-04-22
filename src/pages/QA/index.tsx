@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2, Zap } from 'lucide-react';
+import { Send, Bot, User, Loader2, Zap, Wifi, WifiOff } from 'lucide-react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 
@@ -9,19 +9,19 @@ interface Message {
   content: string;
 }
 
-const API_KEY = 'ak_2rU2Ai02G5b04d594p8Vp6Ip5RA0s';
-const MODEL_NAME = 'longcat';
+const MODEL_NAME = 'qwen-plus';
 
 export default function QAAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
-      content: '🐱 你好！我是LongCat AI助手，专业的职场与技术顾问。我可以帮你解答：\n\n• **技术问题**：编程、算法、系统设计\n• **职场建议**：职业发展、团队协作、项目管理\n• **AI学习**：机器学习、深度学习、应用实践\n\n请问有什么需要我帮忙的吗？',
+      content: '🤖 你好！我是通义千问 AI助手，专业的职场与技术顾问。我可以帮你解答：\n\n• **技术问题**：编程、算法、系统设计\n• **职场建议**：职业发展、团队协作、项目管理\n• **AI学习**：机器学习、深度学习、应用实践\n\n请问有什么需要我帮忙的吗？',
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [apiStatus, setApiStatus] = useState<'unknown' | 'connected' | 'disconnected'>('unknown');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -46,99 +46,98 @@ export default function QAAssistant() {
     setIsLoading(true);
 
     try {
-      // 尝试调用longcat API
       let assistantMessage: Message;
+      let apiSuccess = false;
+      let lastError = null;
 
       try {
-        // 使用正确的longcat API endpoint
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
+        console.log('尝试连接到通义千问 API代理...');
 
-        const response = await fetch('https://api.longcat.ai/v1/chat/completions', {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000); // 20秒超时
+
+        const response = await fetch('https://hzbrgdaudidzokewdpwz.supabase.co/functions/v1/qwen-chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`,
-            'User-Agent': 'AI-Web-Platform/1.0',
           },
           body: JSON.stringify({
-            model: 'longcat-v1', // 使用正确的模型名称
+            model: MODEL_NAME,
             messages: [
               {
                 role: 'system',
-                content: '你是一个专业的职场与技术AI助手，名为LongCat。你擅长解答技术问题、职场建议、编程指导等。请提供准确、有帮助、详细的回答。'
+                content: '你是一个专业的职场与技术AI助手，名为通义千问。你擅长解答技术问题、职场建议、编程指导等。请提供准确、有帮助、详细的回答。'
               },
               { role: 'user', content: userMessage.content }
-            ],
-            max_tokens: 1500,
-            temperature: 0.8,
-            top_p: 0.95,
-            frequency_penalty: 0.0,
-            presence_penalty: 0.0,
+            ]
           }),
           signal: controller.signal,
         });
 
         clearTimeout(timeoutId);
 
+        // 首先获取响应文本以进行调试
+        const responseText = await response.text();
+        console.log('API response status:', response.status, 'text length:', responseText.length);
+
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('LongCat API Error:', response.status, errorText);
-          throw new Error(`API request failed: ${response.status} - ${errorText}`);
+          console.error('API proxy error:', response.status, responseText);
+          let errorMsg = `API错误: ${response.status}`;
+          try {
+            const errorData = JSON.parse(responseText);
+            errorMsg = errorData.error || errorMsg;
+          } catch (e) {
+            // 如果无法解析JSON，使用默认错误信息
+            errorMsg = `服务器错误: ${responseText.substring(0, 100)}`;
+          }
+          throw new Error(errorMsg);
         }
 
-        const data = await response.json();
-
-        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-          throw new Error('Invalid API response format');
+        // 尝试解析响应为JSON
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError.message, 'Response:', responseText.substring(0, 200));
+          throw new Error('服务器响应格式错误');
         }
 
-        assistantMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: data.choices[0].message.content,
-        };
-      } catch (apiError) {
-        console.warn('API调用失败，使用模拟响应:', apiError);
+        if (data.success && data.data) {
+          assistantMessage = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: data.data.content,
+          };
+          apiSuccess = true;
+          console.log('成功连接到通义千问 API');
+          setApiStatus('connected');
+        } else {
+          console.log('响应格式无效:', data);
+          throw new Error(data.error || '响应格式错误');
+        }
+      } catch (error) {
+        console.log('API连接失败:', error.message);
+        lastError = error;
+      }
 
-        // 根据问题类型提供更相关的模拟响应
-        const getMockResponse = (question: string) => {
-          const lowerQuestion = question.toLowerCase();
-
-          if (lowerQuestion.includes('代码') || lowerQuestion.includes('编程') || lowerQuestion.includes('开发')) {
-            return `关于编程问题"${question}"，我建议：\n\n**技术方案**：\n1. 分析需求和技术栈\n2. 选择合适的设计模式\n3. 编写清晰、可维护的代码\n\n**最佳实践**：\n• 遵循SOLID原则\n• 编写单元测试\n• 代码审查\n\n需要具体的技术指导吗？`;
-          }
-
-          if (lowerQuestion.includes('职场') || lowerQuestion.includes('工作') || lowerQuestion.includes('管理')) {
-            return `关于职场问题"${question}"，我的建议：\n\n**职业发展**：\n1. 明确职业目标\n2. 持续学习新技能\n3. 建立专业网络\n\n**工作方法**：\n• 优先级管理\n• 有效沟通\n• 团队协作\n\n需要更具体的职场建议吗？`;
-          }
-
-          if (lowerQuestion.includes('ai') || lowerQuestion.includes('人工智能') || lowerQuestion.includes('机器学习')) {
-            return `关于AI技术"${question}"，关键点包括：\n\n**基础知识**：\n1. 机器学习原理\n2. 深度学习框架\n3. 实际应用场景\n\n**学习路径**：\n• 理论基础\n• 编程实践\n• 项目经验\n\n需要详细的AI学习指导吗？`;
-          }
-
-          // 通用响应
-          return `关于"${question}"这个问题，我建议从以下几个角度思考：\n\n**问题分析**：\n1. 明确核心需求\n2. 识别关键因素\n3. 评估约束条件\n\n**解决方案**：\n• 制定具体步骤\n• 考虑风险因素\n• 准备备选方案\n\n需要我详细解释某个方面吗？`;
-        };
-
-        const mockResponse = getMockResponse(userMessage.content);
-
-        assistantMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: `🤖 **LongCat AI (演示模式)**\n\n${mockResponse}\n\n⚠️ *当前使用演示响应，因为无法连接到LongCat AI服务。错误详情：${apiError instanceof Error ? apiError.message : '未知错误'}*\n\n请检查：\n1. API服务是否可用\n2. 网络连接状态\n3. API密钥配置`,
-        };
+      if (!apiSuccess) {
+        console.error('通义千问 API连接失败');
+        setApiStatus('disconnected');
+        throw new Error(`无法连接到通义千问 API: ${lastError?.message || '连接失败'}`);
       }
 
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('聊天错误:', error);
+    } catch (apiError) {
+      console.error('Qwen API连接失败:', apiError);
+
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `抱歉，连接AI服务时遇到了问题。这可能是由于网络连接或API服务暂时不可用导致的。\n\n**建议操作：**\n1. 检查网络连接\n2. 稍后重试\n3. 如果问题持续存在，请联系技术支持\n\n您可以尝试重新发送您的问题。`,
+        content: `❌ **通义千问 AI 连接失败**\n\n无法连接到通义千问 AI服务，错误详情：\n\n${apiError instanceof Error ? apiError.message : '未知连接错误'}\n\n**可能的原因：**\n1. 通义千问 API服务暂时不可用\n2. 网络连接问题\n3. API密钥配置错误\n4. API端点地址已变更\n\n**建议操作：**\n• 检查网络连接\n• 稍后重试\n• 联系技术支持确认API状态\n• 验证API密钥和端点配置\n\n请确保通义千问 AI服务正常运行后再试。`,
       };
+
       setMessages((prev) => [...prev, errorMessage]);
+      setApiStatus('disconnected');
     } finally {
       setIsLoading(false);
     }
@@ -157,8 +156,62 @@ export default function QAAssistant() {
         <div className="flex items-center gap-4">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyber-purple/30 bg-cyber-purple/10 text-cyber-purple">
             <Bot className="h-5 w-5" />
-            <span className="font-bold tracking-wider">LONGCAT AI 终端</span>
+            <span className="font-bold tracking-wider">通义千问 AI 终端</span>
           </div>
+
+          <button
+            onClick={async () => {
+              setIsLoading(true);
+              try {
+                const testResponse = await fetch('https://hzbrgdaudidzokewdpwz.supabase.co/functions/v1/qwen-chat', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    model: MODEL_NAME,
+                    messages: [{ role: 'user', content: '测试连接' }]
+                  }),
+                });
+
+                const responseText = await testResponse.text();
+                console.log('Test response status:', testResponse.status, 'text:', responseText.substring(0, 100));
+
+                if (testResponse.ok) {
+                  try {
+                    const data = JSON.parse(responseText);
+                    if (data.success) {
+                      setApiStatus('connected');
+                      alert('✅ 通义千问 API 连接成功！');
+                    } else {
+                      throw new Error(data.error || '连接测试失败');
+                    }
+                  } catch (parseError) {
+                    throw new Error('响应解析失败');
+                  }
+                } else {
+                  let errorMsg = `连接失败: ${testResponse.status}`;
+                  try {
+                    const errorData = JSON.parse(responseText);
+                    errorMsg = errorData.error || errorMsg;
+                  } catch (e) {
+                    errorMsg = `服务器错误: ${responseText.substring(0, 100)}`;
+                  }
+                  setApiStatus('disconnected');
+                  alert(`❌ ${errorMsg}`);
+                }
+              } catch (error) {
+                setApiStatus('disconnected');
+                alert(`❌ 连接错误: ${error.message}`);
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+            disabled={isLoading}
+            className="px-3 py-1 bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 rounded text-xs"
+          >
+            测试连接
+          </button>
         </div>
       </div>
 
@@ -198,7 +251,7 @@ export default function QAAssistant() {
                 {msg.role === 'assistant' && (
                   <div className="absolute -bottom-5 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-[10px] text-cyber-purple">
                     <Zap className="h-3 w-3" />
-                    <span>Powered by longcat</span>
+                    <span>Powered by 通义千问</span>
                   </div>
                 )}
               </div>
@@ -210,7 +263,7 @@ export default function QAAssistant() {
                 <Loader2 className="h-5 w-5 animate-spin" />
               </div>
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-gray-400 rounded-tl-sm flex items-center gap-2">
-                <span className="animate-pulse">longcat 正在思考中...</span>
+                <span className="animate-pulse">通义千问 正在思考中...</span>
               </div>
             </div>
           )}
@@ -244,8 +297,23 @@ export default function QAAssistant() {
             </div>
 
             <div className="text-center mt-2">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                {apiStatus === 'connected' ? (
+                  <>
+                    <Wifi className="h-3 w-3 text-green-400" />
+                    <span className="text-[10px] text-green-400">通义千问 AI 已连接</span>
+                  </>
+                ) : apiStatus === 'disconnected' ? (
+                  <>
+                    <WifiOff className="h-3 w-3 text-red-400" />
+                    <span className="text-[10px] text-red-400">通义千问 AI 连接失败</span>
+                  </>
+                ) : (
+                  <span className="text-[10px] text-gray-500">连接状态: 检测中...</span>
+                )}
+              </div>
               <span className="text-[10px] text-gray-500">
-                内容由 longcat AI 生成，可能会有误差，请注意甄别。
+                内容由通义千问 AI 生成，可能会有误差，请注意甄别。
               </span>
             </div>
           </div>

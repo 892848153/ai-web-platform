@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "check": "tsc -b --noEmit",
     "tunnel": "npx localtunnel --port 5173",
-    "update-practices": "node update_practices.cjs"
+    "update-practices": "node update_practices.cjs",
+    "update-daily-ai": "node scripts/update-daily-hot-ai.cjs",
+    "migrate-workflows": "node applyWorkflowsMigration.js",
+    "troubleshoot-longcat": "node scripts/troubleshoot-longcat.cjs",
+    "test-longcat": "node scripts/test-longcat-connection.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.3",

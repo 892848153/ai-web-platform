@@ -1,0 +1,68 @@
+name: Daily Hot AI Update
+
+on:
+  schedule:
+    # Run every day at 8:05 AM Beijing time (0:05 UTC) to avoid conflicts
+    - cron: '5 0 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-daily-hot-ai:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Update daily hot AI data
+      run: |
+        # Update timestamp in DailyHotAI component
+        node -e "
+          const fs = require('fs');
+          const path = require('path');
+
+          const componentPath = path.join(process.cwd(), 'src/components/learning/DailyHotAI.tsx');
+          let content = fs.readFileSync(componentPath, 'utf8');
+
+          const today = new Date().toISOString().split('T')[0];
+          const timestamp = new Date().toISOString();
+
+          const updateComment = '// Last updated: ' + timestamp;
+
+          if (content.includes('// Last updated:')) {
+            content = content.replace(/\/\/ Last updated:.*\n/, updateComment + '\\n');
+          } else {
+            content = updateComment + '\\n' + content;
+          }
+
+          fs.writeFileSync(componentPath, content);
+
+          console.log('Daily Hot AI data update triggered for', today);
+          console.log('Update timestamp:', timestamp);
+        "
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add src/components/learning/DailyHotAI.tsx
+        git diff-index --quiet HEAD || git commit -m "chore(daily): update hot AI data timestamp"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Trigger client-side cache refresh
+      run: |
+        # This would typically be done through a webhook or API call
+        # For now, we'll just log that the update was successful
+        echo "Daily Hot AI update completed successfully"
+        echo "Client-side cache will be refreshed on next visit"

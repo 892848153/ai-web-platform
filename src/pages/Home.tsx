@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Terminal, Bot, Cpu, GraduationCap, Briefcase, ArrowRight, Zap } from 'lucide-react';
+import { Terminal, Bot, Cpu, GraduationCap, Briefcase, ArrowRight, Zap, Sparkles } from 'lucide-react';
+import { RecommendationSection } from '@/components/recommendation/RecommendationSection';
 
 const features = [
   {
@@ -106,6 +107,24 @@ export default function Home() {
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      {/* 个性化推荐区域 */}
+      <section className="w-full py-16 container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8">
+            <Sparkles className="h-6 w-6 text-cyber-purple" />
+            <h2 className="text-2xl font-bold text-white">为您推荐</h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-cyber-purple/30 to-transparent"></div>
+          </div>
+
+          <RecommendationSection
+            title=""
+            showHeader={false}
+            limit={6}
+            className="mb-12"
+          />
         </div>
       </section>
     </div>

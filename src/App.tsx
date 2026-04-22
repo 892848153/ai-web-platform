@@ -6,6 +6,8 @@ import QAAssistant from "@/pages/QA";
 import BestPractices from "@/pages/BestPractices";
 import LearningCenter from "@/pages/Learning";
 import RewardsSquare from "@/pages/Rewards";
+import DemandDetails from "@/pages/Rewards/Details";
+import AgentWorkflow from "@/pages/AgentWorkflow";
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
           <Route path="/practices" element={<BestPractices />} />
           <Route path="/learning" element={<LearningCenter />} />
           <Route path="/rewards" element={<RewardsSquare />} />
+          <Route path="/rewards/:id" element={<DemandDetails />} />
+          <Route path="/workflow" element={<AgentWorkflow />} />
         </Route>
       </Routes>
     </Router>

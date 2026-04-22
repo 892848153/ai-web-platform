@@ -9,6 +9,7 @@ import { AuthModal } from '../auth/AuthModal';
 const navItems = [
   { path: '/tools', label: 'AI 工具广场', icon: Terminal },
   { path: '/qa', label: '智能问答助手', icon: Bot },
+  { path: '/workflow', label: 'Agent 工作流', icon: Cpu },
   { path: '/practices', label: '最佳实践区', icon: Cpu },
   { path: '/learning', label: 'AI 学习中心', icon: GraduationCap },
   { path: '/rewards', label: '需求悬赏广场', icon: Briefcase },

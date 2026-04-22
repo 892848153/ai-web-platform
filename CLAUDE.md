@@ -16,12 +16,12 @@ The application follows a modular React architecture with:
 - **State Management**: Zustand for global state
 - **Routing**: React Router DOM
 - **Backend Integration**: Supabase for data persistence
-- **AI Integration**: LongCat model API for intelligent Q&A features
+- **AI Integration**: 通义千问(Qwen) model API for intelligent Q&A features
 
 ## Key Features
 
 1. **AI Tools Square** - Showcase of internal and external AI tools with categorized browsing
-2. **Smart Q&A Assistant** - Natural language问答 using LongCat model (API Key: ak_2rU2Ai02G5b04d594p8Vp6Ip5RA0s)
+2. **Smart Q&A Assistant** - Natural language问答 using 通义千问(Qwen) model via Supabase Edge Function
 3. **Best Practices Hub** - AI application scenarios and reusable templates
 4. **AI Learning Center** - Progressive learning content from basics to advanced
 5. **Rewards Square** - Employee需求悬赏 platform with AI expert matching
@@ -56,7 +56,7 @@ npm run update-practices
 Required environment variables in `.env`:
 - `VITE_SUPABASE_URL` - Supabase project URL
 - `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
-- `VITE_LONG_CAT_API_KEY` - LongCat AI model API key
+- `VITE_QWEN_API_KEY` - 通义千问(Qwen) AI model API key
 
 ## Project Structure
 
@@ -101,8 +101,8 @@ src/
 
 ## API Integration
 
-- **LongCat AI Model**: Primary AI问答 engine
-- **Supabase**: Backend-as-a-Service for data persistence
+- **通义千问 AI Model**: Primary AI问答 engine via Supabase Edge Function
+- **Supabase**: Backend-as-a-Service for data persistence and serverless functions
 - **External APIs**: Various AI tool integrations
 
 ## Testing Strategy

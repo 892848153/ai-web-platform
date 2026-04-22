@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Database, Eye, Network, Wrench, Play, CheckCircle2, ChevronRight, Zap, BookOpen, Fingerprint, Activity, Code, Cpu } from 'lucide-react';
+import { Brain, Database, Eye, Network, Wrench, Play, CheckCircle2, ChevronRight, Zap, BookOpen, Fingerprint, Activity, Code, Cpu, TrendingUp } from 'lucide-react';
+import DailyHotAI from '../../components/learning/DailyHotAI';
 
 const aiAnatomy = [
   {
@@ -8,7 +9,7 @@ const aiAnatomy = [
     icon: Brain,
     title: '大脑中枢：大语言模型 (LLM)',
     shortTitle: '基础算力与模型',
-    description: 'AI 的中枢神经。负责理解自然语言、逻辑推理、生成文本。如同人类的大脑，它是所有智能行为的发源地和基础算力来源。',
+    description: 'AI 的中枢神经，如同人类大脑的皮层。它拥有惊人的语言理解能力，能够解析复杂指令、进行逻辑推理、创作文本内容。想象一下，LLM 就像一个拥有无限知识储备的天才学者，但它需要正确的引导才能发挥最大潜能。它的核心能力来自于海量数据的预训练，形成了对世界知识的深刻理解。',
     color: 'text-purple-400',
     bgColor: 'bg-purple-400/10',
     borderColor: 'border-purple-400/30',
@@ -24,7 +25,7 @@ const aiAnatomy = [
     icon: Fingerprint,
     title: '沟通语言：提示词工程 (Prompt)',
     shortTitle: '沟通与表达',
-    description: '人类与 AI 的交流协议。Prompt 是激活大脑特定区域的”咒语”，决定了 AI 的思考方向、角色设定和输出质量。',
+    description: '人类与 AI 的交流艺术，就像与外星人对话的密码。优秀的提示词能够激活 AI 的特定能力区域，就像给天才学者提供精确的研究方向。通过角色扮演、思维链引导、示例演示等技巧，我们可以让 AI 从”通用助手”变身”领域专家”。提示词工程是释放 AI 潜能的关键钥匙。',
     color: 'text-pink-400',
     bgColor: 'bg-pink-400/10',
     borderColor: 'border-pink-400/30',
@@ -40,7 +41,7 @@ const aiAnatomy = [
     icon: Code,
     title: '后天技能：Skill 与 Function Calling',
     shortTitle: '专业技能库',
-    description: 'AI 学习到的具体专业能力（Skill）。它使 AI 从”只会聊天的百科全书”转变为”可以执行特定任务（如写代码、查天气）的专业助手”。',
+    description: 'AI 的专业技能库，让通用大脑具备具体执行能力。就像给天才学者配备专业工具箱，Function Calling 让 AI 能够调用外部 API、执行数据库查询、生成代码、分析数据等具体任务。这些技能使 AI 从被动应答者转变为主动执行者，成为真正意义上的智能助手。',
     color: 'text-cyan-400',
     bgColor: 'bg-cyan-400/10',
     borderColor: 'border-cyan-400/30',
@@ -56,7 +57,7 @@ const aiAnatomy = [
     icon: Wrench,
     title: '行动手脚：MCP (模型上下文协议)',
     shortTitle: '现实世界接口',
-    description: 'AI 的物理执行器官。MCP (Model Context Protocol) 是一种标准化接口，让 AI 能够连接本地IDE、读写文件系统、操作企业级 API，从而真正在现实世界中"做事"。',
+    description: 'AI 与现实世界交互的桥梁，如同神经系统连接肌肉和感官。MCP 协议为 AI 提供了标准化的"肢体语言"，让它能够安全地操作文件系统、连接开发工具、调用企业 API。想象一下，没有 MCP 的 AI 就像被困在虚拟世界中的天才，而有了 MCP，它就能在现实世界中施展拳脚，成为真正的生产力工具。',
     color: 'text-emerald-400',
     bgColor: 'bg-emerald-400/10',
     borderColor: 'border-emerald-400/30',
@@ -72,7 +73,7 @@ const aiAnatomy = [
     icon: Activity,
     title: '神经突触：Hook 与生命周期',
     shortTitle: '事件与干预机制',
-    description: 'AI 运行时的干预节点。Hook 允许我们在 AI 思考前（Pre-hook）、思考中、输出后（Post-hook）插入自定义逻辑，如安全拦截、数据脱敏或日志审计。',
+    description: 'AI 思维流程的监控和干预系统，如同大脑的神经突触调节机制。Hook 让我们能够在 AI 的整个生命周期中插入控制逻辑：Pre-hook 像安全门卫，过滤恶意输入；运行中 Hook 像思维导师，引导正确方向；Post-hook 像质量检查员，确保输出安全可靠。这些干预点构成了 AI 系统的安全护栏和智能引导系统。',
     color: 'text-orange-400',
     bgColor: 'bg-orange-400/10',
     borderColor: 'border-orange-400/30',
@@ -88,7 +89,7 @@ const aiAnatomy = [
     icon: Database,
     title: '海马体：记忆库 (RAG & 向量空间)',
     shortTitle: '长期与短期记忆',
-    description: 'AI 的记忆系统。通过检索增强生成 (RAG) 解决幻觉，短期记忆管理当前对话，长期记忆（向量数据库）则沉淀海量企业私有知识。',
+    description: 'AI 的记忆宫殿，解决"金鱼脑"问题的神器。短期记忆管理当前对话上下文，让 AI 能够进行连贯的多轮交流；长期记忆通过向量数据库存储海量知识，让 AI 拥有"过目不忘"的能力；RAG（检索增强生成）技术则像给 AI 配备了一个实时更新的知识库，确保回答基于最新、最准确的信息，彻底告别"胡说八道"。',
     color: 'text-blue-400',
     bgColor: 'bg-blue-400/10',
     borderColor: 'border-blue-400/30',
@@ -104,7 +105,7 @@ const aiAnatomy = [
     icon: Cpu,
     title: '基因进化：微调 (Fine-tuning)',
     shortTitle: '模型基因重塑',
-    description: 'AI 的基因改造。当 Prompt 无法满足深度的垂直领域需求时，通过 SFT (监督微调) 或 LoRA 等技术，直接改变模型的”肌肉记忆”和基础能力。',
+    description: 'AI 的基因编辑手术，让通用模型变身领域专家。当提示词工程无法满足深度需求时，微调技术就像给 AI 进行”专业训练”，通过监督微调（SFT）教会它特定领域的思维模式，或者用 LoRA 技术在不改变大脑结构的情况下增加专业知识。这就像把一个通才培养成专才，让 AI 在特定领域达到专家级水平。',
     color: 'text-yellow-400',
     bgColor: 'bg-yellow-400/10',
     borderColor: 'border-yellow-400/30',
@@ -120,7 +121,7 @@ const aiAnatomy = [
     icon: Eye,
     title: '五官感官：多模态 (Multi-modal)',
     shortTitle: '视听感知系统',
-    description: 'AI 的眼睛和耳朵。多模态模型 (如 GPT-4o, Claude 3.5 Sonnet) 让 AI 能够看懂设计图、听懂语音、分析视频流，彻底打破文本限制。',
+    description: 'AI 的感官进化，从"盲人摸象"到"全知全能"的飞跃。多模态技术让 AI 同时拥有视觉、听觉、语言能力，就像给大脑装上了眼睛和耳朵。它能看懂设计图纸并提出改进建议，听懂语音指令并准确执行，分析视频内容并提取关键信息。这种感官融合让 AI 能够理解更丰富的世界，处理更复杂的任务。',
     color: 'text-amber-400',
     bgColor: 'bg-amber-400/10',
     borderColor: 'border-amber-400/30',
@@ -136,7 +137,7 @@ const aiAnatomy = [
     icon: Network,
     title: '自主意识：Agent 编排框架',
     shortTitle: '神经协作中枢',
-    description: 'AI 的自主意识与群体协作系统。通过 LangChain 或 Dify 这样的框架，赋予 AI 自主规划 (Planning)、反思错误、并调度多 Agent (如前端+后端+测试Agent) 协同工作的能力。',
+    description: 'AI 的自主意识和团队协作大脑，从"单兵作战"到"集团军作战"的进化。Agent 框架让 AI 具备人类般的自主性：能够制定计划、分解任务、调用工具、反思结果。更强大的是，多个 AI Agent 可以像专业团队一样协作——前端 Agent 负责界面，后端 Agent 处理逻辑，测试 Agent 确保质量。这种群体智能让 AI 能够完成极其复杂的系统性任务。',
     color: 'text-rose-400',
     bgColor: 'bg-rose-400/10',
     borderColor: 'border-rose-400/30',
@@ -166,7 +167,7 @@ export default function LearningCenter() {
           <span>全新互动式学习体验</span>
         </motion.div>
         
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -174,13 +175,13 @@ export default function LearningCenter() {
         >
           AI 构造学：从零解构人工智能
         </motion.h1>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="text-gray-400 max-w-2xl"
         >
-          打破黑盒，将 AI 视作一个"硅基生命体"。通过探索它的感官、大脑、记忆与手脚，构建完整的技术认知地图。
+          打破黑盒，将 AI 视作一个"硅基生命体"。从大脑中枢到神经末梢，从感官接收到自主意识，深度解剖人工智能的九大核心组件，构建完整的技术认知地图。
         </motion.p>
       </div>
 
@@ -345,6 +346,21 @@ export default function LearningCenter() {
             </div>
           </div>
         </motion.div>
+      </div>
+
+      {/* Daily Hot AI Section */}
+      <div className="mt-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex items-center gap-2 mb-6"
+        >
+          <TrendingUp className="h-6 w-6 text-cyber-accent" />
+          <h2 className="text-2xl font-bold text-white">每日AI技术热点</h2>
+        </motion.div>
+
+        <DailyHotAI />
       </div>
     </div>
   );
