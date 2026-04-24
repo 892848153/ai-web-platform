@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2, Zap, Wifi, WifiOff } from 'lucide-react';
+import { Send, Bot, User, Loader2, Zap, Wifi, WifiOff, Database, Search } from 'lucide-react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
+import { knowledgeBase, KnowledgeBase } from '../../lib/rag/KnowledgeBase';
 
 interface Message {
   id: string;
@@ -12,6 +13,8 @@ interface Message {
 const MODEL_NAME = 'qwen-plus';
 
 export default function QAAssistant() {
+  const [useRAG, setUseRAG] = useState(true);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -49,6 +52,42 @@ export default function QAAssistant() {
       let assistantMessage: Message;
       let apiSuccess = false;
       let lastError = null;
+      let ragContext = '';
+
+      // RAG 知识库检索
+      if (useRAG) {
+        try {
+          const searchResults = knowledgeBase.search(userMessage.content, 3);
+          setSearchResults(searchResults);
+
+          if (searchResults.length > 0) {
+            // 如果搜索到相关知识，直接返回知识库内容
+            let knowledgeResponse = `🎯 **基于知识库的智能回答**\n\n`;
+            knowledgeResponse += `我为您找到了 ${searchResults.length} 条相关知识：\n\n`;
+
+            searchResults.forEach((result, index) => {
+              knowledgeResponse += `### 【知识 ${index + 1}】${result.item.title}\n`;
+              knowledgeResponse += `${result.item.content}\n`;
+              knowledgeResponse += `**标签**: ${result.item.tags.join(', ')}\n\n`;
+            });
+
+            knowledgeResponse += `---\n`;
+            knowledgeResponse += `以上信息来自我们的专业知识库。如果您需要更详细的解释或有其他问题，请随时告诉我！`;
+
+            assistantMessage = {
+              id: (Date.now() + 1).toString(),
+              role: 'assistant',
+              content: knowledgeResponse,
+            };
+
+            setMessages((prev) => [...prev, assistantMessage]);
+            setIsLoading(false);
+            return; // 直接返回，不再调用API
+          }
+        } catch (ragError) {
+          console.log('RAG 检索失败:', ragError);
+        }
+      }
 
       try {
         console.log('尝试连接到通义千问 API代理...');
@@ -56,64 +95,68 @@ export default function QAAssistant() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 20000); // 20秒超时
 
-        const response = await fetch('https://hzbrgdaudidzokewdpwz.supabase.co/functions/v1/qwen-chat', {
+        // 构建消息，包含 RAG 上下文
+        const systemMessage = {
+          role: 'system',
+          content: useRAG && ragContext
+            ? ragContext
+            : '你是一个专业的职场与技术AI助手，名为通义千问。你擅长解答技术问题、职场建议、编程指导等。请提供准确、有帮助、详细的回答。'
+        };
+
+        const userPrompt = useRAG && ragContext ? ragContext : userMessage.content;
+
+        // Direct integration with 通义千问 API
+        const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_QWEN_API_KEY}`,
           },
           body: JSON.stringify({
             model: MODEL_NAME,
-            messages: [
-              {
-                role: 'system',
-                content: '你是一个专业的职场与技术AI助手，名为通义千问。你擅长解答技术问题、职场建议、编程指导等。请提供准确、有帮助、详细的回答。'
-              },
-              { role: 'user', content: userMessage.content }
-            ]
+            input: {
+              messages: [
+                { role: systemMessage.role, content: systemMessage.content },
+                { role: 'user', content: userPrompt }
+              ]
+            },
+            parameters: {
+              result_format: 'message'
+            }
           }),
           signal: controller.signal,
         });
 
         clearTimeout(timeoutId);
 
-        // 首先获取响应文本以进行调试
-        const responseText = await response.text();
-        console.log('API response status:', response.status, 'text length:', responseText.length);
-
         if (!response.ok) {
-          console.error('API proxy error:', response.status, responseText);
-          let errorMsg = `API错误: ${response.status}`;
+          const errorText = await response.text();
+          console.error('通义千问 API error:', response.status, errorText);
+          let errorMsg = `通义千问 API错误: ${response.status}`;
           try {
-            const errorData = JSON.parse(responseText);
-            errorMsg = errorData.error || errorMsg;
+            const errorData = JSON.parse(errorText);
+            errorMsg = errorData.message || errorData.error?.message || errorMsg;
           } catch (e) {
-            // 如果无法解析JSON，使用默认错误信息
-            errorMsg = `服务器错误: ${responseText.substring(0, 100)}`;
+            errorMsg = `服务器错误: ${errorText.substring(0, 100)}`;
           }
           throw new Error(errorMsg);
         }
 
-        // 尝试解析响应为JSON
-        let data;
-        try {
-          data = JSON.parse(responseText);
-        } catch (parseError) {
-          console.error('JSON parse error:', parseError.message, 'Response:', responseText.substring(0, 200));
-          throw new Error('服务器响应格式错误');
-        }
+        // 解析响应
+        const data = await response.json();
 
-        if (data.success && data.data) {
+        if (data.output && data.output.choices && data.output.choices.length > 0) {
           assistantMessage = {
             id: (Date.now() + 1).toString(),
             role: 'assistant',
-            content: data.data.content,
+            content: data.output.choices[0].message.content,
           };
           apiSuccess = true;
           console.log('成功连接到通义千问 API');
           setApiStatus('connected');
         } else {
           console.log('响应格式无效:', data);
-          throw new Error(data.error || '响应格式错误');
+          throw new Error('通义千问 API响应格式错误');
         }
       } catch (error) {
         console.log('API连接失败:', error.message);
@@ -126,6 +169,7 @@ export default function QAAssistant() {
         throw new Error(`无法连接到通义千问 API: ${lastError?.message || '连接失败'}`);
       }
 
+      // 只有当RAG没有找到结果时才添加API返回的消息
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (apiError) {
       console.error('Qwen API连接失败:', apiError);
@@ -159,43 +203,57 @@ export default function QAAssistant() {
             <span className="font-bold tracking-wider">通义千问 AI 终端</span>
           </div>
 
+          {/* RAG 开关 */}
+          <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+            <Database className="h-4 w-4 text-cyber-accent" />
+            <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useRAG}
+                onChange={(e) => setUseRAG(e.target.checked)}
+                className="rounded border-gray-600 bg-gray-700 text-cyber-purple focus:ring-cyber-purple"
+              />
+              RAG 知识库
+            </label>
+          </div>
+
           <button
             onClick={async () => {
               setIsLoading(true);
               try {
-                const testResponse = await fetch('https://hzbrgdaudidzokewdpwz.supabase.co/functions/v1/qwen-chat', {
+                const testResponse = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${import.meta.env.VITE_QWEN_API_KEY}`,
                   },
                   body: JSON.stringify({
                     model: MODEL_NAME,
-                    messages: [{ role: 'user', content: '测试连接' }]
+                    input: {
+                      messages: [{ role: 'user', content: '你好，测试连接' }]
+                    },
+                    parameters: {
+                      result_format: 'message'
+                    }
                   }),
                 });
 
-                const responseText = await testResponse.text();
-                console.log('Test response status:', testResponse.status, 'text:', responseText.substring(0, 100));
-
                 if (testResponse.ok) {
-                  try {
-                    const data = JSON.parse(responseText);
-                    if (data.success) {
-                      setApiStatus('connected');
-                      alert('✅ 通义千问 API 连接成功！');
-                    } else {
-                      throw new Error(data.error || '连接测试失败');
-                    }
-                  } catch (parseError) {
-                    throw new Error('响应解析失败');
+                  const data = await testResponse.json();
+                  if (data.output && data.output.choices && data.output.choices.length > 0) {
+                    setApiStatus('connected');
+                    alert('✅ 通义千问 API 连接成功！');
+                  } else {
+                    throw new Error('响应格式错误');
                   }
                 } else {
+                  const errorText = await testResponse.text();
                   let errorMsg = `连接失败: ${testResponse.status}`;
                   try {
-                    const errorData = JSON.parse(responseText);
-                    errorMsg = errorData.error || errorMsg;
+                    const errorData = JSON.parse(errorText);
+                    errorMsg = errorData.message || errorData.error?.message || errorMsg;
                   } catch (e) {
-                    errorMsg = `服务器错误: ${responseText.substring(0, 100)}`;
+                    errorMsg = `服务器错误: ${errorText.substring(0, 100)}`;
                   }
                   setApiStatus('disconnected');
                   alert(`❌ ${errorMsg}`);
@@ -312,6 +370,16 @@ export default function QAAssistant() {
                   <span className="text-[10px] text-gray-500">连接状态: 检测中...</span>
                 )}
               </div>
+              {/* RAG 搜索结果显示 */}
+              {useRAG && searchResults.length > 0 && (
+                <div className="flex items-center justify-center gap-1 mt-1">
+                  <Search className="h-3 w-3 text-cyber-accent" />
+                  <span className="text-[10px] text-cyber-accent">
+                    检索到 {searchResults.length} 条相关知识
+                  </span>
+                </div>
+              )}
+
               <span className="text-[10px] text-gray-500">
                 内容由通义千问 AI 生成，可能会有误差，请注意甄别。
               </span>
