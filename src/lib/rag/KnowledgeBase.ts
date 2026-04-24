@@ -31,7 +31,21 @@ export class KnowledgeBase {
    */
   search(query: string, limit: number = 3): SearchResult[] {
     const queryLower = query.toLowerCase();
-    const queryWords = queryLower.split(/\s+/).filter(word => word.length > 1);
+
+    // 移除常见疑问词，保留核心关键词
+    const stopWords = ['如何', '怎么', '怎样', '什么', '哪里', '哪个', '哪些', '为什么', '吗', '呢', '吧', '啊'];
+
+    // 中文分词：按字符分割，并生成2-gram词组
+    const chars = queryLower.split('').filter(char => char.trim() !== '');
+    const bigrams = [];
+    for (let i = 0; i < queryLower.length - 1; i++) {
+      bigrams.push(queryLower.substring(i, i + 2));
+    }
+
+    const queryWords = [
+      ...chars.filter(word => word.length > 0 && !stopWords.includes(word)),
+      ...bigrams.filter(word => word.length > 1 && !stopWords.includes(word))
+    ];
 
     const results = this.knowledge
       .map(item => {
@@ -59,6 +73,7 @@ export class KnowledgeBase {
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
 
+    console.log(`RAG搜索: "${query}" -> 关键词: [${queryWords.join(', ')}] -> 找到 ${results.length} 条结果`);
     return results;
   }
 
