@@ -61,47 +61,34 @@ export default function QAAssistant() {
           setSearchResults(searchResults);
 
           if (searchResults.length > 0) {
-            // 先添加总结消息
-            const summaryMessage: Message = {
-              id: Date.now().toString(),
-              role: 'assistant',
-              content: `🎯 **智能知识库为您找到了 ${searchResults.length} 条相关知识**\n\n基于您的问题，我为您精选了以下专业知识，每条知识都经过智能匹配：`,
-            };
-            setMessages((prev) => [...prev, summaryMessage]);
+            // 合并为一条精美的回复
+            let knowledgeResponse = `🎯 **智能知识库回答**\n\n`;
+            knowledgeResponse += `我为您找到了 **${searchResults.length} 条相关知识**，为您提供专业的解答：\n\n`;
 
-            // 为每个搜索结果创建独立的消息
             searchResults.forEach((result, index) => {
               const matchLevel = result.score > 40 ? "🔍 高度匹配" : result.score > 25 ? "📖 相关匹配" : "💡 一般相关";
-              const matchColor = result.score > 40 ? "🟢" : result.score > 25 ? "🟡" : "🔵";
+              const matchBadge = result.score > 40 ? "🟢" : result.score > 25 ? "🟡" : "🔵";
 
-              let knowledgeContent = `## ✨ ${result.item.title}\n\n`;
-              knowledgeContent += `${result.item.content}\n\n`;
-              knowledgeContent += `${matchColor} **${matchLevel}**\n`;
-              knowledgeContent += `🏷️  **标签**: ${result.item.tags.join(', ')}\n\n`;
-              knowledgeContent += `> 💡 知识ID: #${result.item.id}`;
+              knowledgeResponse += `### ✨ ${result.item.title}\n\n`;
+              knowledgeResponse += `> ${result.item.content}\n\n`;
+              knowledgeResponse += `${matchBadge} **${matchLevel}**\n`;
+              knowledgeResponse += `🏷️  ${result.item.tags.join(' • ')}\n\n`;
 
-              const knowledgeMessage: Message = {
-                id: (Date.now() + index + 1).toString(),
-                role: 'assistant',
-                content: knowledgeContent,
-              };
-
-              // 延迟添加每条知识，创造逐个显示的效果
-              setTimeout(() => {
-                setMessages((prev: Message[]) => [...prev, knowledgeMessage]);
-              }, (index + 1) * 500);
+              if (index < searchResults.length - 1) {
+                knowledgeResponse += `---\n\n`;
+              }
             });
 
-            // 最后添加结束消息
-            setTimeout(() => {
-              const endMessage: Message = {
-                id: (Date.now() + searchResults.length + 10).toString(),
-                role: 'assistant',
-                content: `🎓 **知识来源**: AI 启航专业知识库\n\n💬 *如需更详细解释、实际应用指导或有其他问题，欢迎随时提问！*`,
-              };
-              setMessages((prev: Message[]) => [...prev, endMessage]);
-            }, (searchResults.length + 1) * 500);
+            knowledgeResponse += `\n🎓 **知识来源**: AI 启航专业知识库`;
+            knowledgeResponse += `\n💬 *如需更详细解释，欢迎继续提问！*`;
 
+            const assistantMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              role: 'assistant',
+              content: knowledgeResponse,
+            };
+
+            setMessages((prev) => [...prev, assistantMessage]);
             setIsLoading(false);
             return; // 直接返回，不再调用API
           }
