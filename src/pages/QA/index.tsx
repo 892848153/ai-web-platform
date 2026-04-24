@@ -62,17 +62,24 @@ export default function QAAssistant() {
 
           if (searchResults.length > 0) {
             // 如果搜索到相关知识，直接返回知识库内容
-            let knowledgeResponse = `🎯 **基于知识库的智能回答**\n\n`;
-            knowledgeResponse += `我为您找到了 ${searchResults.length} 条相关知识：\n\n`;
+            let knowledgeResponse = `🎯 **智能知识库回答**\n\n`;
+            knowledgeResponse += `根据您的问题，我为您精选了 ${searchResults.length} 条专业知识：\n\n`;
 
             searchResults.forEach((result, index) => {
-              knowledgeResponse += `### 【知识 ${index + 1}】${result.item.title}\n`;
-              knowledgeResponse += `${result.item.content}\n`;
-              knowledgeResponse += `**标签**: ${result.item.tags.join(', ')}\n\n`;
+              const matchLevel = result.score > 40 ? "🔍 高度匹配" : result.score > 25 ? "📖 相关匹配" : "💡 一般相关";
+
+              knowledgeResponse += `## ✨ ${result.item.title}\n\n`;
+              knowledgeResponse += `> ${result.item.content}\n\n`;
+              knowledgeResponse += `**${matchLevel}**  \n`;
+              knowledgeResponse += `🏷️  *${result.item.tags.join(' • ')}*\n\n`;
+
+              if (index < searchResults.length - 1) {
+                knowledgeResponse += `---\n\n`;
+              }
             });
 
-            knowledgeResponse += `---\n`;
-            knowledgeResponse += `以上信息来自我们的专业知识库。如果您需要更详细的解释或有其他问题，请随时告诉我！`;
+            knowledgeResponse += `\n🎓 **知识来源**: AI 启航专业知识库\n`;
+            knowledgeResponse += `💬 *如需更详细解释或实际应用指导，欢迎继续提问！*`;
 
             assistantMessage = {
               id: (Date.now() + 1).toString(),
