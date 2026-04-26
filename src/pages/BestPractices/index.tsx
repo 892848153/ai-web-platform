@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Copy, Eye, ThumbsUp, Check, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { CATEGORIES, getCategoryById, getCategoryStats } from '../../utils/categoryUtils';
 
 export interface Practice {
   id: number;
@@ -14,12 +15,28 @@ export interface Practice {
   created_at?: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  description: string;
+}
+
 export default function BestPractices() {
   const [practices, setPractices] = useState<Practice[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const itemsPerPage = 10;
+
+  const [categoryStats, setCategoryStats] = useState<Record<string, number>>({});
+
+  // Calculate category statistics when practices change
+  useEffect(() => {
+    const stats = getCategoryStats(practices);
+    setCategoryStats(stats);
+  }, [practices]);
 
   useEffect(() => {
     fetchPractices();
@@ -41,17 +58,27 @@ export default function BestPractices() {
     }
   };
 
+  // Filter practices based on selected category
+  const filteredPractices = selectedCategory === 'all'
+    ? practices
+    : practices.filter(practice => practice.tags.includes(selectedCategory));
+
   const handleCopy = (id: number, prompt: string) => {
     navigator.clipboard.writeText(prompt);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const totalPages = Math.ceil(practices.length / itemsPerPage);
-  const currentPractices = practices.slice(
+  const totalPages = Math.ceil(filteredPractices.length / itemsPerPage);
+  const currentPractices = filteredPractices.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Reset to first page when category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
   return (
     <div className="container mx-auto px-4 py-12 flex-1">
       <div className="flex flex-col items-center mb-12 text-center">
@@ -62,6 +89,41 @@ export default function BestPractices() {
           探索真实业务场景下的 AI 落地案例。一键复用高质量 Prompt 和工作流模板（数据已接入 Supabase 实时获取）。
         </p>
       </div>
+
+      {/* Category Filter */}
+      {!loading && (
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-3 justify-center max-w-4xl mx-auto">
+            {CATEGORIES.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  selectedCategory === category.id
+                    ? `bg-gradient-to-r ${category.color} text-white shadow-lg scale-105`
+                    : 'bg-cyber-light border border-white/10 text-gray-400 hover:text-cyber-green hover:border-cyber-green/50'
+                }`}
+                title={`${category.description} (${categoryStats[category.id] || 0} 项)`}
+              >
+                {category.name}
+                {category.id !== 'all' && (
+                  <span className="ml-1 text-xs opacity-75">({categoryStats[category.id] || 0})</span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {selectedCategory !== 'all' && (
+            <div className="text-center mt-4">
+              <p className="text-gray-400 text-sm">
+                已筛选 <span className="text-cyber-green font-bold">
+                  {filteredPractices.length}
+                </span> 个{selectedCategory}相关实践
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-cyber-green">
@@ -84,7 +146,20 @@ export default function BestPractices() {
             </p>
 
             <div className="flex flex-wrap gap-2 mb-6">
-              {practice.tags.map((tag) => (
+              {practice.tags.slice(0, 1).map((tag) => {
+                const category = CATEGORIES.find(cat => cat.id === tag);
+                return (
+                  <span
+                    key={tag}
+                    className={`text-xs text-white font-medium px-3 py-1 rounded-full bg-gradient-to-r ${
+                      category ? category.color : 'from-cyber-green to-cyber-accent'
+                    }`}
+                  >
+                    {tag}
+                  </span>
+                );
+              })}
+              {practice.tags.slice(1).map((tag) => (
                 <span key={tag} className="text-xs text-cyber-green bg-cyber-green/10 px-2 py-1 rounded-sm border border-cyber-green/20">
                   {tag}
                 </span>
@@ -131,6 +206,9 @@ export default function BestPractices() {
           </button>
           <span className="text-gray-400 text-sm">
             第 <span className="text-cyber-green font-bold">{currentPage}</span> / {totalPages} 页
+            {selectedCategory !== 'all' && (
+              <span className="ml-2">(筛选: {filteredPractices.length} 项)</span>
+            )}
           </span>
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
