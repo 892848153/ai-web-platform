@@ -26,29 +26,33 @@ jobs:
     - name: Update daily hot AI data
       run: |
         # Update timestamp in DailyHotAI component
-        node -e "
-          const fs = require('fs');
-          const path = require('path');
+        if [ -f "src/components/learning/DailyHotAI.tsx" ]; then
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
 
-          const componentPath = path.join(process.cwd(), 'src/components/learning/DailyHotAI.tsx');
-          let content = fs.readFileSync(componentPath, 'utf8');
+            const componentPath = path.join(process.cwd(), 'src/components/learning/DailyHotAI.tsx');
+            let content = fs.readFileSync(componentPath, 'utf8');
 
-          const today = new Date().toISOString().split('T')[0];
-          const timestamp = new Date().toISOString();
+            const today = new Date().toISOString().split('T')[0];
+            const timestamp = new Date().toISOString();
 
-          const updateComment = '// Last updated: ' + timestamp;
+            const updateComment = '// Last updated: ' + timestamp;
 
-          if (content.includes('// Last updated:')) {
-            content = content.replace(/\/\/ Last updated:.*\n/, updateComment + '\\n');
-          } else {
-            content = updateComment + '\\n' + content;
-          }
+            if (content.includes('// Last updated:')) {
+              content = content.replace(/\/\/ Last updated:.*\n/, updateComment + '\\\\n');
+            } else {
+              content = updateComment + '\\\\n' + content;
+            }
 
-          fs.writeFileSync(componentPath, content);
+            fs.writeFileSync(componentPath, content);
 
-          console.log('Daily Hot AI data update triggered for', today);
-          console.log('Update timestamp:', timestamp);
-        "
+            console.log('Daily Hot AI data update triggered for', today);
+            console.log('Update timestamp:', timestamp);
+          "
+        else
+          echo "DailyHotAI.tsx not found, skipping update"
+        fi
 
     - name: Commit and push changes
       run: |

@@ -26,8 +26,12 @@ jobs:
 
       - name: Run update script
         env:
-          # 必须在 GitHub Secrets 中配置这些环境变量
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           VITE_LONG_CAT_API_KEY: ${{ secrets.VITE_LONG_CAT_API_KEY }}
-        run: npm run update-practices
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "❌ 缺少必要的环境变量配置，跳过更新"
+            exit 0
+          fi
+          npm run update-practices
