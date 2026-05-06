@@ -1,0 +1,41 @@
+{
+  "envId": "lj-1-d3g3g23tbf5a636af",
+  "version": "2.0",
+  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
+  "functionRoot": ".",
+  "functions": [
+    {
+      "name": "app",
+      "timeout": 10,
+      "runtime": "Nodejs16.13",
+      "memorySize": 128,
+      "handler": "index.main",
+      "environment": {
+        "variables": {}
+      }
+    }
+  ],
+  "hooks": {
+    "predeploy": {
+      "commands": ["npm run build"]
+    }
+  },
+  "hosting": {
+    "site": {
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  },
+  "framework": {
+    "name": "ai-web-platform",
+    "plugins": {
+      "react": {
+        "useRuntime": true
+      }
+    }
+  }
+}

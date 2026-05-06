@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG 知识库测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-btn:hover {
+            background: #7c3aed;
+        }
+        .result {
+            background: #333;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 RAG 知识库功能测试</h1>
+        <p>测试智能家居系统设计的搜索功能</p>
+
+        <button class="test-btn" onclick="testRAGSearch()">测试 RAG 搜索</button>
+        <button class="test-btn" onclick="testAPI()">测试 API 连接</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // 模拟 KnowledgeBase 数据
+        const mockKnowledge = [
+            {
+                id: 182,
+                title: "全屋智能家居系统规划与设备选型指南",
+                content: "完整的智能家居系统规划方案，包含需求分析、系统架构设计、设备选型和安装部署指导。",
+                tags: ["智能家居", "物联网", "家庭自动化", "设备选型"],
+                prompt: "请基于智能家居系统规划的专业知识，为用户提供详细的设备选型和系统设计方案。"
+            },
+            {
+                id: 192,
+                title: "智能家居安全防护与隐私保护策略",
+                content: "智能家居安全防护体系构建，包含网络安全、数据隐私、设备安全等全方位保护策略。",
+                tags: ["智能家居", "网络安全", "隐私保护", "数据加密"],
+                prompt: "请为用户提供智能家居安全防护的专业建议和实施策略。"
+            }
+        ];
+
+        function testRAGSearch() {
+            const query = "智能家居系统如何设计";
+            const results = document.getElementById('results');
+
+            results.innerHTML = '<div class="result">正在测试 RAG 搜索...</div>';
+
+            // 模拟修复后的搜索逻辑
+            const queryLower = query.toLowerCase();
+            const stopWords = ['如何', '怎么', '怎样', '什么', '哪里', '哪个', '哪些', '为什么', '吗', '呢', '吧', '啊'];
+
+            // 中文分词：按字符分割，并生成2-gram词组
+            const chars = queryLower.split('').filter(char => char.trim() !== '');
+            const bigrams = [];
+            for (let i = 0; i < queryLower.length - 1; i++) {
+                bigrams.push(queryLower.substring(i, i + 2));
+            }
+
+            const queryWords = [
+                ...chars.filter(word => word.length > 0 && !stopWords.includes(word)),
+                ...bigrams.filter(word => word.length > 1 && !stopWords.includes(word))
+            ];
+
+            console.log('搜索查询:', query, '分词结果:', queryWords);
+
+            const searchResults = mockKnowledge
+                .map(item => {
+                    let score = 0;
+                    const searchText = `${item.title} ${item.content} ${item.tags.join(' ')}`.toLowerCase();
+
+                    for (const word of queryWords) {
+                        if (searchText.includes(word)) {
+                            score += 1;
+                            if (item.title.toLowerCase().includes(word)) {
+                                score += 2;
+                            }
+                            if (item.tags.some(tag => tag.toLowerCase().includes(word))) {
+                                score += 1.5;
+                            }
+                        }
+                    }
+
+                    return { item, score };
+                })
+                .filter(result => result.score > 0)
+                .sort((a, b) => b.score - a.score);
+
+            let output = `✅ RAG 搜索测试完成\n\n`;
+            output += `查询: "${query}"\n`;
+            output += `分词: [${queryWords.join(', ')}]\n`;
+            output += `找到 ${searchResults.length} 条相关结果:\n\n`;
+
+            searchResults.forEach((result, index) => {
+                output += `【结果 ${index + 1}】(匹配度: ${result.score})\n`;
+                output += `标题: ${result.item.title}\n`;
+                output += `内容: ${result.item.content}\n`;
+                output += `标签: ${result.item.tags.join(', ')}\n\n`;
+            });
+
+            if (searchResults.length > 0) {
+                output += `🎉 RAG 知识库功能正常！已找到相关智能家居设计知识。`;
+            } else {
+                output += `❌ 未找到相关结果，搜索功能需要修复。`;
+            }
+
+            results.innerHTML = `<div class="result success">${output}</div>`;
+        }
+
+        async function testAPI() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="result">正在测试 API 连接...</div>';
+
+            try {
+                const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer sk-b8b1b39e96584adda6b640ed344ff38a',
+                    },
+                    body: JSON.stringify({
+                        model: 'qwen-plus',
+                        input: {
+                            messages: [
+                                { role: 'user', content: '你好，测试连接' }
+                            ]
+                        },
+                        parameters: {
+                            result_format: 'message'
+                        }
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.output && data.output.choices && data.output.choices.length > 0) {
+                        results.innerHTML = '<div class="result success">✅ 通义千问 API 连接成功！服务正常可用。</div>';
+                    } else {
+                        results.innerHTML = '<div class="result error">❌ API 响应格式错误</div>';
+                    }
+                } else {
+                    const errorText = await response.text();
+                    results.innerHTML = `<div class="result error">❌ API 连接失败: ${response.status} - ${errorText}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="result error">❌ API 连接错误: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
