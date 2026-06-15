@@ -1,5 +1,4 @@
-// Last updated: 2026-06-15T03:08:39.680Z\nimport { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+// Last updated: 2026-06-15T05:21:18.631Z\nimport { motion } from 'framer-motion';
 import { TrendingUp, Star, GitFork, ExternalLink, Calendar, Clock, Zap, Github, Newspaper, RefreshCw } from 'lucide-react';
 import { refreshDailyHotAI, dailyUpdateScheduler, DailyUpdateScheduler as SchedulerClass } from '../../lib/dailyUpdate';
 
