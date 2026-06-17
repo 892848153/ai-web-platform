@@ -1,5 +1,4 @@
-// Last updated: 2026-06-16T05:25:15.289Z\nimport { TrendingUp, Star, GitFork, ExternalLink, Calendar, Clock, Zap, Github, Newspaper, RefreshCw } from 'lucide-react';
-import { refreshDailyHotAI, dailyUpdateScheduler, DailyUpdateScheduler as SchedulerClass } from '../../lib/dailyUpdate';
+// Last updated: 2026-06-17T05:05:21.405Z\nimport { refreshDailyHotAI, dailyUpdateScheduler, DailyUpdateScheduler as SchedulerClass } from '../../lib/dailyUpdate';
 
 interface GitHubRepo {
   id: number;
