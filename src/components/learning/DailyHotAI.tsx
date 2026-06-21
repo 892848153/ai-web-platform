@@ -1,5 +1,4 @@
-// Last updated: 2026-06-20T04:36:19.708Z\n  id: number;
-  name: string;
+// Last updated: 2026-06-21T05:10:31.195Z\n  name: string;
   full_name: string;
   description: string;
   html_url: string;
