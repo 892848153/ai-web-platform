@@ -1,5 +1,4 @@
-// Last updated: 2026-06-22T05:23:28.330Z\n  full_name: string;
-  description: string;
+// Last updated: 2026-06-23T04:15:45.558Z\n  description: string;
   html_url: string;
   stargazers_count: number;
   forks_count: number;
