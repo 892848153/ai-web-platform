@@ -1,5 +1,4 @@
-// Last updated: 2026-06-26T04:25:25.119Z\n  forks_count: number;
-  language: string;
+// Last updated: 2026-06-27T04:11:31.155Z\n  language: string;
   topics: string[];
   created_at: string;
   updated_at: string;
