@@ -1,5 +1,4 @@
-// Last updated: 2026-06-27T04:11:31.155Z\n  language: string;
-  topics: string[];
+// Last updated: 2026-06-28T04:45:17.408Z\n  topics: string[];
   created_at: string;
   updated_at: string;
 }
