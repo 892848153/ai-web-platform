@@ -1,5 +1,4 @@
-// Last updated: 2026-06-28T04:45:17.408Z\n  topics: string[];
-  created_at: string;
+// Last updated: 2026-06-29T04:54:11.653Z\n  created_at: string;
   updated_at: string;
 }
 
