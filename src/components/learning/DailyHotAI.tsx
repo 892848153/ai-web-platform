@@ -1,5 +1,4 @@
-// Last updated: 2026-06-29T04:54:11.653Z\n  created_at: string;
-  updated_at: string;
+// Last updated: 2026-06-30T04:20:14.106Z\n  updated_at: string;
 }
 
 interface NewsItem {
