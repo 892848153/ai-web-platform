@@ -1,5 +1,4 @@
-// Last updated: 2026-07-02T04:15:29.243Z\n
-interface NewsItem {
+// Last updated: 2026-07-03T04:02:09.359Z\ninterface NewsItem {
   title: string;
   url: string;
   source: string;
