@@ -1,5 +1,4 @@
-// Last updated: 2026-07-05T04:15:10.836Z\n  url: string;
-  source: string;
+// Last updated: 2026-07-06T04:22:38.634Z\n  source: string;
   publishedAt: string;
   description: string;
 }
