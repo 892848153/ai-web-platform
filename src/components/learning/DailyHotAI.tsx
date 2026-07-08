@@ -1,5 +1,4 @@
-// Last updated: 2026-07-07T04:11:46.659Z\n  publishedAt: string;
-  description: string;
+// Last updated: 2026-07-08T03:36:32.887Z\n  description: string;
 }
 
 interface DailyHotAI {
