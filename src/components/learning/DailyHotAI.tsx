@@ -1,5 +1,4 @@
-// Last updated: 2026-07-11T03:33:50.191Z\ninterface DailyHotAI {
-  date: string;
+// Last updated: 2026-07-12T03:46:54.528Z\n  date: string;
   githubRepos: GitHubRepo[];
   news: NewsItem[];
   summary: string;
