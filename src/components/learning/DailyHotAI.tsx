@@ -1,5 +1,4 @@
-// Last updated: 2026-07-13T03:49:32.298Z\n  githubRepos: GitHubRepo[];
-  news: NewsItem[];
+// Last updated: 2026-07-14T03:22:59.632Z\n  news: NewsItem[];
   summary: string;
 }
 
