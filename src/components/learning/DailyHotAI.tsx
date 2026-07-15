@@ -1,5 +1,4 @@
-// Last updated: 2026-07-14T03:22:59.632Z\n  news: NewsItem[];
-  summary: string;
+// Last updated: 2026-07-15T03:23:18.923Z\n  summary: string;
 }
 
 export default function DailyHotAI() {
