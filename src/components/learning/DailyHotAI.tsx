@@ -1,5 +1,4 @@
-// Last updated: 2026-07-15T03:23:18.923Z\n  summary: string;
-}
+// Last updated: 2026-07-16T03:29:15.179Z\n}
 
 export default function DailyHotAI() {
   const [hotAI, setHotAI] = useState<DailyHotAI | null>(null);
