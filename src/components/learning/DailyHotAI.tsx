@@ -1,5 +1,4 @@
-// Last updated: 2026-07-17T03:31:02.764Z\n
-export default function DailyHotAI() {
+// Last updated: 2026-07-18T03:21:00.551Z\nexport default function DailyHotAI() {
   const [hotAI, setHotAI] = useState<DailyHotAI | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
