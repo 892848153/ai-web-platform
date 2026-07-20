@@ -1,5 +1,4 @@
-// Last updated: 2026-07-19T03:41:57.526Z\n  const [hotAI, setHotAI] = useState<DailyHotAI | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+// Last updated: 2026-07-20T03:55:41.635Z\n  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
