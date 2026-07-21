@@ -1,5 +1,4 @@
-// Last updated: 2026-07-20T03:55:41.635Z\n  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// Last updated: 2026-07-21T03:34:59.477Z\n  const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
   useEffect(() => {
