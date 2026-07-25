@@ -1,5 +1,4 @@
-// Last updated: 2026-07-24T03:35:00.870Z\n  useEffect(() => {
-    fetchDailyHotAI();
+// Last updated: 2026-07-25T03:31:46.055Z\n    fetchDailyHotAI();
 
     // Listen for manual refresh events
     const handleRefresh = () => {
