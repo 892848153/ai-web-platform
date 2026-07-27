@@ -1,5 +1,4 @@
-// Last updated: 2026-07-26T03:47:51.511Z\n
-    // Listen for manual refresh events
+// Last updated: 2026-07-27T03:56:07.780Z\n    // Listen for manual refresh events
     const handleRefresh = () => {
       fetchDailyHotAI();
     };
