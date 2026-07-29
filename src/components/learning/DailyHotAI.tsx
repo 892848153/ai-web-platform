@@ -1,5 +1,4 @@
-// Last updated: 2026-07-28T03:27:36.923Z\n    const handleRefresh = () => {
-      fetchDailyHotAI();
+// Last updated: 2026-07-29T03:29:44.417Z\n      fetchDailyHotAI();
     };
 
     window.addEventListener('refreshDailyHotAI', handleRefresh);
