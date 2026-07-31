@@ -1,5 +1,4 @@
-// Last updated: 2026-07-30T03:17:27.151Z\n    };
-
+// Last updated: 2026-07-31T03:44:27.280Z\n
     window.addEventListener('refreshDailyHotAI', handleRefresh);
 
     // Check cache age and refresh if needed (every hour)
