@@ -1,5 +1,4 @@
-// Last updated: 2026-07-31T03:44:27.280Z\n
-    window.addEventListener('refreshDailyHotAI', handleRefresh);
+// Last updated: 2026-08-01T03:43:32.297Z\n    window.addEventListener('refreshDailyHotAI', handleRefresh);
 
     // Check cache age and refresh if needed (every hour)
     const interval = setInterval(() => {
