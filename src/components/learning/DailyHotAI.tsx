@@ -1,5 +1,4 @@
-// Last updated: 2026-08-05T03:25:03.145Z\n      const cacheAge = SchedulerClass.getCacheAge();
-      if (cacheAge > 24) { // Refresh if cache is older than 24 hours
+// Last updated: 2026-08-06T03:28:36.556Z\n      if (cacheAge > 24) { // Refresh if cache is older than 24 hours
         fetchDailyHotAI();
       }
     }, 3600000); // Check every hour
