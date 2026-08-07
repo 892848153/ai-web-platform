@@ -1,5 +1,4 @@
-// Last updated: 2026-08-06T03:28:36.556Z\n      if (cacheAge > 24) { // Refresh if cache is older than 24 hours
-        fetchDailyHotAI();
+// Last updated: 2026-08-07T03:11:59.060Z\n        fetchDailyHotAI();
       }
     }, 3600000); // Check every hour
 
