@@ -1,5 +1,4 @@
-// Last updated: 2026-08-07T03:11:59.060Z\n        fetchDailyHotAI();
-      }
+// Last updated: 2026-08-08T02:11:51.347Z\n      }
     }, 3600000); // Check every hour
 
     return () => {
