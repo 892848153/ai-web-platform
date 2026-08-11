@@ -1,5 +1,4 @@
-// Last updated: 2026-08-10T02:27:19.990Z\n
-    return () => {
+// Last updated: 2026-08-11T02:20:51.332Z\n    return () => {
       window.removeEventListener('refreshDailyHotAI', handleRefresh);
       clearInterval(interval);
     };
