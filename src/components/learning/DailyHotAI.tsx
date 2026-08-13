@@ -1,5 +1,4 @@
-// Last updated: 2026-08-12T02:36:13.075Z\n      window.removeEventListener('refreshDailyHotAI', handleRefresh);
-      clearInterval(interval);
+// Last updated: 2026-08-13T02:38:37.266Z\n      clearInterval(interval);
     };
   }, []);
 
