@@ -1,5 +1,4 @@
-// Last updated: 2026-08-14T02:36:26.012Z\n    };
-  }, []);
+// Last updated: 2026-08-15T01:44:28.730Z\n  }, []);
 
   const fetchDailyHotAI = async () => {
     try {
