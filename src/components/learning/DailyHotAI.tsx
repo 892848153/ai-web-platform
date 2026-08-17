@@ -1,5 +1,4 @@
-// Last updated: 2026-08-16T01:52:44.737Z\n
-  const fetchDailyHotAI = async () => {
+// Last updated: 2026-08-17T01:50:19.113Z\n  const fetchDailyHotAI = async () => {
     try {
       setIsLoading(true);
 
