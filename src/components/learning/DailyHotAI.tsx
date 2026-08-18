@@ -1,5 +1,4 @@
-// Last updated: 2026-08-17T01:50:19.113Z\n  const fetchDailyHotAI = async () => {
-    try {
+// Last updated: 2026-08-18T01:45:03.792Z\n    try {
       setIsLoading(true);
 
       // Check if we have cached data for today
