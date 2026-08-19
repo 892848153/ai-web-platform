@@ -1,5 +1,4 @@
-// Last updated: 2026-08-18T01:45:03.792Z\n    try {
-      setIsLoading(true);
+// Last updated: 2026-08-19T01:47:12.006Z\n      setIsLoading(true);
 
       // Check if we have cached data for today
       const today = new Date().toISOString().split('T')[0];
