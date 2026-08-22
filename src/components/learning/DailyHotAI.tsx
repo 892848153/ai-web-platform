@@ -1,5 +1,4 @@
-// Last updated: 2026-08-21T01:51:25.096Z\n      // Check if we have cached data for today
-      const today = new Date().toISOString().split('T')[0];
+// Last updated: 2026-08-22T01:44:53.284Z\n      const today = new Date().toISOString().split('T')[0];
       const cachedData = localStorage.getItem(`dailyHotAI_${today}`);
 
       if (cachedData) {
