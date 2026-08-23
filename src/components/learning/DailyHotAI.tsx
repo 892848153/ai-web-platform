@@ -1,5 +1,4 @@
-// Last updated: 2026-08-22T01:44:53.284Z\n      const today = new Date().toISOString().split('T')[0];
-      const cachedData = localStorage.getItem(`dailyHotAI_${today}`);
+// Last updated: 2026-08-23T01:54:39.234Z\n      const cachedData = localStorage.getItem(`dailyHotAI_${today}`);
 
       if (cachedData) {
         setHotAI(JSON.parse(cachedData));
