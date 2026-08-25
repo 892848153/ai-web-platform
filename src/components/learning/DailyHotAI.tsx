@@ -1,5 +1,4 @@
-// Last updated: 2026-08-24T01:52:09.879Z\n
-      if (cachedData) {
+// Last updated: 2026-08-25T01:46:04.884Z\n      if (cachedData) {
         setHotAI(JSON.parse(cachedData));
         setIsLoading(false);
         return;
