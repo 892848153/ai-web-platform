@@ -1,5 +1,4 @@
-// Last updated: 2026-08-29T06:57:40.117Z\n      }
-
+// Last updated: 2026-08-30T05:13:44.041Z\n
       // Fetch trending GitHub repositories related to AI
       const githubRepos = await fetchGitHubTrending();
 
