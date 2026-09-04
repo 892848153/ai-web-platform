@@ -1,5 +1,4 @@
-// Last updated: 2026-09-03T04:12:58.972Z\n      // Generate mock news (in a real implementation, you'd fetch from a news API)
-      const news = generateMockNews();
+// Last updated: 2026-09-04T04:21:32.403Z\n      const news = generateMockNews();
 
       const hotAIData: DailyHotAI = {
         date: today,
