@@ -1,5 +1,4 @@
-// Last updated: 2026-09-14T02:52:28.985Z\n      // Cache the data
-      localStorage.setItem(`dailyHotAI_${today}`, JSON.stringify(hotAIData));
+// Last updated: 2026-09-14T04:44:58.873Z\n      localStorage.setItem(`dailyHotAI_${today}`, JSON.stringify(hotAIData));
       setHotAI(hotAIData);
       setLastUpdated(new Date().toISOString());
     } catch (err) {
