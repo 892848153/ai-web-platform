@@ -1,5 +1,4 @@
-// Last updated: 2026-09-14T04:44:58.873Z\n      localStorage.setItem(`dailyHotAI_${today}`, JSON.stringify(hotAIData));
-      setHotAI(hotAIData);
+// Last updated: 2026-09-15T04:43:50.394Z\n      setHotAI(hotAIData);
       setLastUpdated(new Date().toISOString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch daily hot AI');
