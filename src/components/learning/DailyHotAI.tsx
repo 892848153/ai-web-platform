@@ -1,5 +1,4 @@
-// Last updated: 2026-09-15T04:43:50.394Z\n      setHotAI(hotAIData);
-      setLastUpdated(new Date().toISOString());
+// Last updated: 2026-09-16T04:40:35.401Z\n      setLastUpdated(new Date().toISOString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch daily hot AI');
     } finally {
