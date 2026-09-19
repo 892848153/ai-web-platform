@@ -1,5 +1,4 @@
-// Last updated: 2026-09-18T04:31:18.268Z\n      setError(err instanceof Error ? err.message : 'Failed to fetch daily hot AI');
-    } finally {
+// Last updated: 2026-09-19T04:28:19.378Z\n    } finally {
       setIsLoading(false);
     }
   };
