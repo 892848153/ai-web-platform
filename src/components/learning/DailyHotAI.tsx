@@ -1,5 +1,4 @@
-// Last updated: 2026-09-20T04:44:56.352Z\n      setIsLoading(false);
-    }
+// Last updated: 2026-09-21T04:44:59.805Z\n    }
   };
 
   const fetchGitHubTrending = async (): Promise<GitHubRepo[]> => {
