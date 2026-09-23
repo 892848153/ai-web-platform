@@ -1,5 +1,4 @@
-// Last updated: 2026-09-22T04:42:01.547Z\n  };
-
+// Last updated: 2026-09-23T04:36:59.387Z\n
   const fetchGitHubTrending = async (): Promise<GitHubRepo[]> => {
     try {
       // Fetch trending AI repositories from GitHub
