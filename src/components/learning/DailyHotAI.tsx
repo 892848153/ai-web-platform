@@ -1,5 +1,4 @@
-// Last updated: 2026-09-24T04:35:13.672Z\n  const fetchGitHubTrending = async (): Promise<GitHubRepo[]> => {
-    try {
+// Last updated: 2026-09-25T04:45:37.981Z\n    try {
       // Fetch trending AI repositories from GitHub
       const response = await fetch(
         'https://api.github.com/search/repositories?q=ai+machine-learning+artificial-intelligence+created:>2024-01-01&sort=stars&order=desc&per_page=10',
