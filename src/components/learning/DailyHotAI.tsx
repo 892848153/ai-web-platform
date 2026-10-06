@@ -1,5 +1,4 @@
-// Last updated: 2026-10-05T05:24:55.149Z\n
-      if (!response.ok) {
+// Last updated: 2026-10-06T06:09:42.477Z\n      if (!response.ok) {
         throw new Error(`GitHub API error: ${response.status}`);
       }
 
