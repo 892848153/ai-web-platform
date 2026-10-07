@@ -1,5 +1,4 @@
-// Last updated: 2026-10-06T06:09:42.477Z\n      if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status}`);
+// Last updated: 2026-10-07T05:44:38.595Z\n        throw new Error(`GitHub API error: ${response.status}`);
       }
 
       const data = await response.json();
