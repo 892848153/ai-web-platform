@@ -1,5 +1,4 @@
-// Last updated: 2026-10-07T05:44:38.595Z\n        throw new Error(`GitHub API error: ${response.status}`);
-      }
+// Last updated: 2026-10-08T05:51:47.166Z\n      }
 
       const data = await response.json();
       return data.items || [];
