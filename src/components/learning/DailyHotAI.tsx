@@ -1,5 +1,4 @@
-// Last updated: 2026-10-11T05:35:15.145Z\n      return data.items || [];
-    } catch (error) {
+// Last updated: 2026-10-12T05:45:30.968Z\n    } catch (error) {
       console.warn('Failed to fetch GitHub trending repos, using fallback data:', error);
       return getFallbackGitHubData();
     }
