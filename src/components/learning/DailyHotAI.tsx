@@ -1,5 +1,4 @@
-// Last updated: 2026-10-12T05:45:30.968Z\n    } catch (error) {
-      console.warn('Failed to fetch GitHub trending repos, using fallback data:', error);
+// Last updated: 2026-10-13T06:40:16.239Z\n      console.warn('Failed to fetch GitHub trending repos, using fallback data:', error);
       return getFallbackGitHubData();
     }
   };
