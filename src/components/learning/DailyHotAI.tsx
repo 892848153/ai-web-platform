@@ -1,5 +1,4 @@
-// Last updated: 2026-10-18T04:18:29.137Z\n  const getFallbackGitHubData = (): GitHubRepo[] => {
-    return [
+// Last updated: 2026-10-19T04:28:04.277Z\n    return [
       {
         id: 1,
         name: "awesome-ai-agents",
