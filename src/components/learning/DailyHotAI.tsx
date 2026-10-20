@@ -1,5 +1,4 @@
-// Last updated: 2026-10-19T04:28:04.277Z\n    return [
-      {
+// Last updated: 2026-10-20T04:38:20.893Z\n      {
         id: 1,
         name: "awesome-ai-agents",
         full_name: "Significant-Gravitas/awesome-ai-agents",
