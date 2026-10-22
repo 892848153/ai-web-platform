@@ -1,5 +1,4 @@
-// Last updated: 2026-10-21T04:31:07.467Z\n        id: 1,
-        name: "awesome-ai-agents",
+// Last updated: 2026-10-22T04:29:50.218Z\n        name: "awesome-ai-agents",
         full_name: "Significant-Gravitas/awesome-ai-agents",
         description: "A curated list of AI agent frameworks and tools",
         html_url: "https://github.com/Significant-Gravitas/awesome-ai-agents",
