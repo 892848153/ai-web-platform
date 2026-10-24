@@ -1,5 +1,4 @@
-// Last updated: 2026-10-23T04:35:16.304Z\n        full_name: "Significant-Gravitas/awesome-ai-agents",
-        description: "A curated list of AI agent frameworks and tools",
+// Last updated: 2026-10-24T04:24:58.161Z\n        description: "A curated list of AI agent frameworks and tools",
         html_url: "https://github.com/Significant-Gravitas/awesome-ai-agents",
         stargazers_count: 15420,
         forks_count: 2341,
