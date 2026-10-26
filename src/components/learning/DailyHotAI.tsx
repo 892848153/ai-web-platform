@@ -1,5 +1,4 @@
-// Last updated: 2026-10-25T04:28:43.173Z\n        html_url: "https://github.com/Significant-Gravitas/awesome-ai-agents",
-        stargazers_count: 15420,
+// Last updated: 2026-10-26T04:32:22.166Z\n        stargazers_count: 15420,
         forks_count: 2341,
         language: "Markdown",
         topics: ["ai-agents", "autonomous-agents", "llm"],
