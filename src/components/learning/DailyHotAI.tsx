@@ -1,5 +1,4 @@
-// Last updated: 2026-11-03T06:33:23.863Z\n        id: 2,
-        name: "llama.cpp",
+// Last updated: 2026-11-04T06:02:02.239Z\n        name: "llama.cpp",
         full_name: "ggerganov/llama.cpp",
         description: "LLM inference in C/C++",
         html_url: "https://github.com/ggerganov/llama.cpp",
