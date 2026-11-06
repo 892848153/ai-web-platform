@@ -1,5 +1,4 @@
-// Last updated: 2026-11-05T06:29:42.265Z\n        full_name: "ggerganov/llama.cpp",
-        description: "LLM inference in C/C++",
+// Last updated: 2026-11-06T06:24:45.949Z\n        description: "LLM inference in C/C++",
         html_url: "https://github.com/ggerganov/llama.cpp",
         stargazers_count: 67890,
         forks_count: 9876,
