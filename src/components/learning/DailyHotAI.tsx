@@ -1,5 +1,4 @@
-// Last updated: 2026-11-07T05:48:09.256Z\n        html_url: "https://github.com/ggerganov/llama.cpp",
-        stargazers_count: 67890,
+// Last updated: 2026-11-08T05:51:08.151Z\n        stargazers_count: 67890,
         forks_count: 9876,
         language: "C++",
         topics: ["llm", "inference", "cpp", "ggml"],
