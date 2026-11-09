@@ -1,5 +1,4 @@
-// Last updated: 2026-11-08T05:51:08.151Z\n        stargazers_count: 67890,
-        forks_count: 9876,
+// Last updated: 2026-11-09T06:04:58.917Z\n        forks_count: 9876,
         language: "C++",
         topics: ["llm", "inference", "cpp", "ggml"],
         created_at: "2023-03-26T00:00:00Z",
