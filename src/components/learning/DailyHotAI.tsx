@@ -1,5 +1,4 @@
-// Last updated: 2026-11-09T06:04:58.917Z\n        forks_count: 9876,
-        language: "C++",
+// Last updated: 2026-11-10T07:05:41.327Z\n        language: "C++",
         topics: ["llm", "inference", "cpp", "ggml"],
         created_at: "2023-03-26T00:00:00Z",
         updated_at: "2024-04-22T00:00:00Z"
