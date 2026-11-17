@@ -1,5 +1,4 @@
-// Last updated: 2026-11-16T06:10:33.861Z\n        id: 3,
-        name: "autogen",
+// Last updated: 2026-11-17T07:45:40.829Z\n        name: "autogen",
         full_name: "microsoft/autogen",
         description: "A programming framework for agentic AI",
         html_url: "https://github.com/microsoft/autogen",
