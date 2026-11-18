@@ -1,5 +1,4 @@
-// Last updated: 2026-11-17T07:45:40.829Z\n        name: "autogen",
-        full_name: "microsoft/autogen",
+// Last updated: 2026-11-18T07:10:39.521Z\n        full_name: "microsoft/autogen",
         description: "A programming framework for agentic AI",
         html_url: "https://github.com/microsoft/autogen",
         stargazers_count: 34567,
