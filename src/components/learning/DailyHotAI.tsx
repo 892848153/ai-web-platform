@@ -1,5 +1,4 @@
-// Last updated: 2026-11-19T07:12:27.608Z\n        description: "A programming framework for agentic AI",
-        html_url: "https://github.com/microsoft/autogen",
+// Last updated: 2026-11-20T07:00:24.609Z\n        html_url: "https://github.com/microsoft/autogen",
         stargazers_count: 34567,
         forks_count: 4567,
         language: "Python",
