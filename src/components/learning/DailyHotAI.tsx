@@ -1,5 +1,4 @@
-// Last updated: 2026-11-24T09:43:06.848Z\n        topics: ["multi-agent", "llm", "autonomous-agents"],
-        created_at: "2023-08-08T00:00:00Z",
+// Last updated: 2026-11-25T08:17:03.472Z\n        created_at: "2023-08-08T00:00:00Z",
         updated_at: "2024-04-22T00:00:00Z"
       },
       {
